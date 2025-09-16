@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sc-machine
+  namespace: ostis-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sc-machine
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: sc-machine
+    spec:
+      initContainers:
+        - name: git-clone-kb
+          image: alpine/git
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Cloning knowledge base repository..."
+              git clone https://github.com/ostis-ai/ims.ostis.kb /tmp/knowledge-base
+              cp -r /tmp/knowledge-base/* /kb/
+              echo "Knowledge base cloned successfully"
+          volumeMounts:
+            - name: kb-source
+              mountPath: /kb
+      containers:
+        - name: sc-machine
+          image: ostis/sc-machine:0.10.0
+          command: ["/sc-machine/scripts/docker_entrypoint.sh"]
+          args:
+            - "run"
+            - "-b"
+            - "/sc-machine/build/Release/bin"
+            - "-c"
+            - "/sc-machine/sc-machine.ini"
+          env:
+            - name: REBUILD_KB
+              value: "0"
+            - name: KB_PATH
+              value: "/kb"
+            - name: BINARY_PATH
+              value: "/sc-machine/build/Release/bin"
+            - name: EXTENSIONS_PATH
+              value: "/sc-machine/build/Release/lib/extensions"
+            - name: CONFIG_PATH
+              value: "/sc-machine/sc-machine.ini"
+            - name: SC_SERVER_HOST
+              value: "0.0.0.0"
+          ports:
+            - containerPort: 8090
+          volumeMounts:
+            - name: kb-source
+              mountPath: /kb
+            - name: kb-binary
+              mountPath: /kb.bin
+          livenessProbe:
+            exec:
+              command: ["/sc-machine/scripts/healthcheck.sh"]
+            initialDelaySeconds: 120
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["/sc-machine/scripts/healthcheck.sh"]
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+      volumes:
+        - name: kb-source
+          emptyDir: {}
+        - name: kb-binary
+          emptyDir: {}
