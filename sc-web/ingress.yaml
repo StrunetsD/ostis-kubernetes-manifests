@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: sc-web-ingressroute
+  namespace: ostis-system
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`ostis.local`)
+    kind: Rule
+    services:
+    - name: sc-web-service
+      port: 8000
+    middlewares:
+    - name: compress

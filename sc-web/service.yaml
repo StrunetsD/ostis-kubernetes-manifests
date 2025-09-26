@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sc-web-service
+  namespace: ostis-system
+  labels:
+    app: sc-web
+spec:
+  selector:
+    app: sc-web
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+    nodePort: 30080  # Будет доступно на всех нодах по этому порту
+  type: NodePort
