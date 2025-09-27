@@ -5,11 +5,10 @@ metadata:
   namespace: ostis-system
 spec:
   selector:
-    app: sc-machine 
+    app: sc-machine
   ports:
   - name: ws
     port: 8090
     targetPort: 8090
-  - name: http
-    port: 8000
-    targetPort: 8000
+    nodePort: 30081  
+  type: NodePort

@@ -39,6 +39,8 @@ spec:
             - "-c"
             - "/sc-machine/sc-machine.ini"
           env:
+            - name: SC_SERVER_LOG_LEVEL
+              value: "Debug"
             - name: REBUILD_KB
               value: "0"
             - name: KB_PATH
@@ -58,20 +60,20 @@ spec:
               mountPath: /kb
             - name: kb-binary
               mountPath: /kb.bin
-          livenessProbe:
-            exec:
-              command: ["/sc-machine/scripts/healthcheck.sh"]
-            initialDelaySeconds: 120
-            periodSeconds: 5
-            timeoutSeconds: 10
-            failureThreshold: 3
-          readinessProbe:
-            exec:
-              command: ["/sc-machine/scripts/healthcheck.sh"]
-            initialDelaySeconds: 30
-            periodSeconds: 5
-            timeoutSeconds: 10
-            failureThreshold: 3
+          # livenessProbe:
+          #   exec:
+          #     command: ["/sc-machine/scripts/healthcheck.sh"]
+          #   initialDelaySeconds: 120
+          #   periodSeconds: 5
+          #   timeoutSeconds: 10
+          #   failureThreshold: 3
+          # readinessProbe:
+          #   exec:
+          #     command: ["/sc-machine/scripts/healthcheck.sh"]
+          #   initialDelaySeconds: 30
+          #   periodSeconds: 5
+          #   timeoutSeconds: 10
+          #   failureThreshold: 3
           resources:
             requests:
               memory: "512Mi"
