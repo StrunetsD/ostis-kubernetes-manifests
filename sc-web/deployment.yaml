@@ -18,15 +18,12 @@ spec:
         image: ostis/sc-web:0.9.0
         command: ["/usr/bin/tini", "--", "/sc-web/scripts/docker_entrypoint.sh"]
         args:
-        # ✅ ВНУТРИ КОНТЕЙНЕРА: подключаемся к сервису machine
         - "--server-host=machine"
         - "--server-port=8090"
-        # ✅ ДЛЯ БРАУЗЕРА: указываем порт, который будет доступен через port-forward
         - "--public-url=ws://localhost:30081/ws_json"
         - "--host=0.0.0.0"
         - "--port=8000"
         env:
-        # ✅ ВНУТРИ КОНТЕЙНЕРА: используем сервис machine
         - name: SC_SERVER
           value: "ws://machine:8090/ws_json"
         - name: SC_SERVER_HOST

@@ -10,5 +10,5 @@ spec:
   - name: http
     port: 8000
     targetPort: 8000
-    nodePort: 30080  # ✅ ДОБАВИЛ nodePort для внешнего доступа
-  type: NodePort  # ✅ ИЗМЕНИЛ с ClusterIP на NodePort
+    nodePort: 30080 
+  type: NodePort  
